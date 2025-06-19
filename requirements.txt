@@ -3,5 +3,6 @@ gtts
 requests
 beautifulsoup4
 werkzeug
-serpapi
+google-search-results
+
 
