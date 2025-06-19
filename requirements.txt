@@ -1,8 +1,2 @@
 flask
-gtts
-requests
-beautifulsoup4
-werkzeug
-google-search-results
-
 
