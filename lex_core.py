@@ -1,4 +1,4 @@
-from serpapi import GoogleSearch
+from googlesearchresults import GoogleSearch
 import os
 
 SERPAPI_KEY = "4720e02ba3a74c2671ee2e690f5c4196c30d2b2d1308c1de3690fae14ec2d9f3"
