@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lex AI - Your Smartest Friend</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500&family=JetBrains+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <h1>🤖 Lex AI</h1>
+        <p>Your Smartest AI Sidekick</p>
+    </div>
+
+    <div class="chat-box" id="chat-box"></div>
+
+    <form id="chat-form">
+        <input type="text" id="user-input" placeholder="Ask Lex anything..." required autocomplete="off">
+        <button type="submit">Send 🚀</button>
+    </form>
+
+    <div id="typing-indicator">Lex is thinking...</div>
+
+    <script>
+        const chatForm = document.getElementById("chat-form");
+        const chatBox = document.getElementById("chat-box");
+        const typingIndicator = document.getElementById("typing-indicator");
+
+        chatForm.addEventListener("submit", async function(e) {
+            e.preventDefault();
+            const userInput = document.getElementById("user-input").value;
+            chatBox.innerHTML += `<div class='msg user'>🧑‍🚀 You: ${userInput}</div>`;
+            document.getElementById("user-input").value = "";
+            typingIndicator.style.display = "block";
+
+            const response = await fetch("/ask", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ query: userInput })
+            });
+
+            const data = await response.json();
+            typingIndicator.style.display = "none";
+            chatBox.innerHTML += `<div class='msg lex'>🤖 Lex: ${data.response}</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: lex-ai
+    env: python
+    buildCommand: ""
+    startCommand: "python hello.py"
+    envVars:
+      - key: FLASK_ENV
+        value: production
+
