@@ -17,6 +17,9 @@ def save_memory(mem):
         json.dump(mem, f)
 
 def search_google(query):
+    if not SERPAPI_KEY:
+        return "⚠️ Google search is not available (missing API key)."
+
     try:
         params = {
             "q": query,
@@ -25,12 +28,13 @@ def search_google(query):
         }
         search = GoogleSearch(params)
         results = search.get_dict()
-        answer = results.get("answer_box", {}).get("answer") or \
-                 results.get("answer_box", {}).get("snippet") or \
-                 results.get("organic_results", [{}])[0].get("snippet", "No answer found.")
-        return answer
+
+        # Try to return a smart answer
+        return results.get("answer_box", {}).get("answer") or \
+               results.get("answer_box", {}).get("snippet") or \
+               results.get("organic_results", [{}])[0].get("snippet", "No good result found.")
     except Exception as e:
-        return f"Google search failed: {str(e)}"
+        return f"❌ Google Search error: {e}"
 
 def search_wikipedia(query):
     try:

@@ -1,4 +1,4 @@
 flask
-serpapi
+google-search-results
 wikipedia
 
