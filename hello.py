@@ -1,6 +1,7 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, render_template, request, jsonify
+import os
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates", static_folder="static")
 
 @app.route("/")
 def index():
@@ -8,10 +9,10 @@ def index():
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    message = request.json.get("message")
-    response = f"Lex says: {message}"  # You can replace with real logic later
-    return jsonify({"response": response})
+    msg = request.json.get("message", "")
+    return jsonify({"response": f"Lex says: {msg}"})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
 
