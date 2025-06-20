@@ -1,60 +1,62 @@
-from googlesearchresults import GoogleSearch
-import os
-
-SERPAPI_KEY = "4720e02ba3a74c2671ee2e690f5c4196c30d2b2d1308c1de3690fae14ec2d9f3"
-
+import json, os
+from serpapi import GoogleSearch
 import wikipedia
 
-def get_lex_response(user_input):
-    # Placeholder logic – customize this!
-    if "hello" in user_input.lower():
-        return "Hey there! I'm Lex."
-    return "I'm still learning, but ask me anything!"
+MEMORY_FILE = "memory.json"
+SERPAPI_KEY = os.getenv("4720e02ba3a74c2671ee2e690f5c4196c30d2b2d1308c1de3690fae14ec2d9f3")
 
-from gtts import gTTS
-from playsound import playsound
-import os
-import uuid
-
-def speak(text):
-    filename = f"voice_{uuid.uuid4()}.mp3"
-    tts = gTTS(text=text, lang='en')
-    tts.save(filename)
-    playsound(filename)
-    os.remove(filename)
-
-def get_lex_response(user_input):
+def load_memory():
     try:
-        if "hello" in user_input.lower():
-            return "Hey there! I'm Lex, your assistant."
+        with open(MEMORY_FILE, "r") as f:
+            return json.load(f)
+    except:
+        return {}
 
-        elif "who" in user_input.lower() or "what" in user_input.lower():
-            try:
-                import wikipedia
-                summary = wikipedia.summary(user_input, sentences=2)
-                return summary
-            except:
-                pass  # fallback to search
+def save_memory(mem):
+    with open(MEMORY_FILE, "w") as f:
+        json.dump(mem, f)
 
-        # Use Google Search
+def search_google(query):
+    try:
         params = {
-            "q": user_input,
+            "q": query,
             "api_key": SERPAPI_KEY,
-            "engine": "google",
-            "num": 1
+            "engine": "google"
         }
-
         search = GoogleSearch(params)
         results = search.get_dict()
-
-        answer = ""
-        if "answer_box" in results:
-            answer = results["answer_box"].get("answer") or results["answer_box"].get("snippet", "")
-        elif "organic_results" in results and results["organic_results"]:
-            answer = results["organic_results"][0].get("snippet", "Here's what I found.")
-
-        return answer if answer else "Sorry, I couldn't find anything relevant."
-
+        answer = results.get("answer_box", {}).get("answer") or \
+                 results.get("answer_box", {}).get("snippet") or \
+                 results.get("organic_results", [{}])[0].get("snippet", "No answer found.")
+        return answer
     except Exception as e:
-        return f"Error fetching answer: {str(e)}"
+        return f"Google search failed: {str(e)}"
+
+def search_wikipedia(query):
+    try:
+        return wikipedia.summary(query, sentences=2)
+    except Exception as e:
+        return f"Wikipedia search failed: {str(e)}"
+
+def get_lex_response(msg):
+    mem = load_memory()
+    msg_lower = msg.lower()
+
+    if " is " in msg:
+        key, val = msg.split(" is ")
+        mem[key.strip()] = val.strip()
+        save_memory(mem)
+        return f"Remembered: {key.strip()} is {val.strip()}"
+
+    elif msg_lower.startswith("what is"):
+        key = msg[8:].strip()
+        return mem.get(key, search_wikipedia(key))
+    elif msg_lower.startswith("search "):
+        return search_google(msg[7:].strip())
+
+    elif msg_lower.startswith("wiki "):
+        return search_wikipedia(msg[5:].strip())
+
+    return f"You said: {msg}"
+
 

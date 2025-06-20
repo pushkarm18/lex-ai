@@ -1,27 +1,21 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Lex AI</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lex AI Chat</title>
+  <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
   <div class="container">
-    <header>
-      <h1>🤖 Lex AI</h1>
-      <label class="toggle-switch">
-        <input type="checkbox" id="modeToggle">
-        <span class="slider"></span>
-      </label>
-    </header>
-    
-    <div class="chat-box" id="chatBox"></div>
-    
-    <div class="input-area">
-      <input id="userInput" placeholder="Type a message..." autofocus>
-      <button onclick="sendMessage()">Send</button>
-    </div>
+    <h1>Lex AI 🤖</h1>
+    <div class="chatbox" id="chatbox"></div>
+    <input type="text" id="input" placeholder="Ask Lex something..." autofocus />
+    <button onclick="sendMessage()">Send</button>
+    <button onclick="toggleTheme()">🌗</button>
   </div>
+
   <script src="/static/script.js"></script>
 </body>
 </html>
+
