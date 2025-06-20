@@ -44,23 +44,28 @@ def search_wikipedia(query):
 
 def get_lex_response(msg):
     mem = load_memory()
-    msg_lower = msg.lower()
+    msg_lower = msg.lower().strip()
 
-    if " is " in msg:
+    # Save memory
+    if " is " in msg and not msg_lower.startswith("what is"):
         key, val = msg.split(" is ")
         mem[key.strip()] = val.strip()
         save_memory(mem)
-        return f"Remembered: {key.strip()} is {val.strip()}"
+        return f"📌 Remembered: {key.strip()} is {val.strip()}"
 
+    # Recall from memory
     elif msg_lower.startswith("what is"):
         key = msg[8:].strip()
         return mem.get(key, search_wikipedia(key))
+
+    # Google Search
     elif msg_lower.startswith("search "):
         return search_google(msg[7:].strip())
 
+    # Wikipedia Search
     elif msg_lower.startswith("wiki "):
         return search_wikipedia(msg[5:].strip())
 
-    return f"You said: {msg}"
-
+    # Fallback reply
+    return f"🤖 I'm still learning. You said: {msg}"
 
