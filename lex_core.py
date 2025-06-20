@@ -1,8 +1,10 @@
-import json, os
+import json
 from serpapi import GoogleSearch
+import os
 import wikipedia
 
 MEMORY_FILE = "memory.json"
+
 SERPAPI_KEY = os.getenv("4720e02ba3a74c2671ee2e690f5c4196c30d2b2d1308c1de3690fae14ec2d9f3")
 
 def load_memory():
@@ -17,9 +19,9 @@ def save_memory(mem):
         json.dump(mem, f)
 
 def search_google(query):
-    if not SERPAPI_KEY:
-        return "⚠️ Google search is not available (missing API key)."
-
+    if not SERPAPI_KEY or SERPAPI_KEY.strip() == "":
+        return "⚠️ Google Search is disabled (API key missing)."
+    
     try:
         params = {
             "q": query,
@@ -29,12 +31,12 @@ def search_google(query):
         search = GoogleSearch(params)
         results = search.get_dict()
 
-        # Try to return a smart answer
         return results.get("answer_box", {}).get("answer") or \
                results.get("answer_box", {}).get("snippet") or \
-               results.get("organic_results", [{}])[0].get("snippet", "No good result found.")
+               results.get("organic_results", [{}])[0].get("snippet", "No result found.")
+    
     except Exception as e:
-        return f"❌ Google Search error: {e}"
+        return f"Google Search error: {str(e)}"
 
 def search_wikipedia(query):
     try:
