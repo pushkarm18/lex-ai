@@ -1,30 +1,35 @@
-const input = document.getElementById("userInput");
-const chatBox = document.getElementById("chatBox");
+const chatbox = document.getElementById("chatbox");
+const input = document.getElementById("input");
 
 function sendMessage() {
-  const msg = input.value.trim();
-  if (!msg) return;
+  const message = input.value.trim();
+  if (!message) return;
 
-  chatBox.innerHTML += `<div><b>You:</b> ${msg}</div>`;
+  appendMessage("You", message);
   input.value = "";
 
   fetch("/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: msg })
+    body: JSON.stringify({ message })
   })
   .then(res => res.json())
   .then(data => {
-    chatBox.innerHTML += `<div><b>Lex:</b> ${data.response}</div>`;
-    chatBox.scrollTop = chatBox.scrollHeight;
+    appendMessage("Lex", data.response);
+  })
+  .catch(err => {
+    appendMessage("Lex", "❌ Error reaching Lex.");
   });
 }
 
-input.addEventListener("keypress", e => {
-  if (e.key === "Enter") sendMessage();
-});
+function appendMessage(sender, text) {
+  const msg = document.createElement("div");
+  msg.innerHTML = `<b>${sender}:</b> ${text}`;
+  chatbox.appendChild(msg);
+  chatbox.scrollTop = chatbox.scrollHeight;
+}
 
-// Theme toggle
-document.getElementById("modeToggle").addEventListener("change", (e) => {
-  document.documentElement.setAttribute("data-theme", e.target.checked ? "light" : "dark");
-});
+function toggleTheme() {
+  document.body.classList.toggle("light-mode");
+}
+
